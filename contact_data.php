@@ -2,12 +2,24 @@
     include 'db_connexion.php';
     // Handle delete operation
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $id = $_POST["id"];
+        if (isset($_POST["id"])) {
+            $id = $_POST["id"];
 
-        $sql = "DELETE FROM contact WHERE id=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
+            $sql = "DELETE FROM contact WHERE id=?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+        } elseif (isset($_POST["name"], $_POST["email"], $_POST["subject"], $_POST["message"])) {
+            $name = $_POST["name"];
+            $email = $_POST["email"];
+            $subject = $_POST["subject"];
+            $message = $_POST["message"];
+
+            $sql = "INSERT INTO contact (name, email, subject, message) VALUES (?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ssss", $name, $email, $subject, $message);
+            $stmt->execute();
+        }
     }
 
     $sql = "SELECT * FROM contact";
@@ -41,7 +53,7 @@
             background-color: white;  
             border-radius: 0px;
             text-align: center;
-            width: 100%;
+            width: 60px;
             
         }
         th{
@@ -65,6 +77,35 @@
             background-color: #d23a30;
         }
     </style>
+    <script>
+      function insertRow() {
+        var name = prompt("Enter name");
+        var email = prompt("Enter email");
+        var subject = prompt("Enter subject");
+        var message = prompt("Enter message");
+
+        if (name && email && subject && message) {
+          var form = document.createElement("form");
+          form.setAttribute("method", "post");
+          form.setAttribute("action", "contact_data.php");
+
+          var fields = ["name", "email", "subject", "message"];
+          var values = [name, email, subject, message];
+
+          for (var i = 0; i < fields.length; i++) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", fields[i]);
+            hiddenField.setAttribute("value", values[i]);
+
+            form.appendChild(hiddenField);
+          }
+
+          document.body.appendChild(form);
+          form.submit();
+        }
+      }
+    </script>
   </head>
   <body>
   <section class="header">
@@ -79,6 +120,16 @@
           </ul>
         </div>
         <i class="fa fa-bars" onclick="showMenu()"></i>
+      </nav>
+      <nav>
+        <button onclick="insertRow()" 
+        style="background-color: #42b5f2;
+            color: white;
+            margin-left:1400px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer">Insert</button>
       </nav>
       <table class="contact-table">
         <tr>

@@ -1,4 +1,7 @@
 <?php
+  // Start a new session or resume the existing one
+  session_start();
+
   include 'db_connexion.php';
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -10,9 +13,6 @@
     $result = $conn->query($sql);
     
     if ($result->num_rows > 0) {
-      // Start a new session or resume the existing one
-      session_start();
-
       // Store user data in session variables
       $user = $result->fetch_assoc();
       $_SESSION['user_id'] = $user['id'];
@@ -21,9 +21,10 @@
       // Redirect to signIn-result.php
       header("Location: signIn-result.html");
       exit;
-    } 
-    if ($result === false) {
-      echo "<script>alert('Error: " . $sql . "\\n" . $conn->error . "');</script>";
+    } else {
+      $_SESSION['login_error'] = "Password is incorrect.";
+      header("Location: signIn.php");
+      exit;
     }
   }
 ?>
@@ -80,6 +81,22 @@
       >
         Saisissez votre e-mail et mot de passe
       </p>
+      <?php
+        
+
+        if (isset($_SESSION['login_error'])) {
+          echo "<p id='loginErrorMessage' style='color:red; text-align:center;'>" . $_SESSION['login_error'] . "</p>";
+          echo "
+          <script type='text/javascript'>
+            setTimeout(function() {
+              var element = document.getElementById('loginErrorMessage');
+              element.parentNode.removeChild(element);
+            }, 3000);
+          </script>
+          ";
+          unset($_SESSION['login_error']);
+        }
+      ?>
       <form method="POST" action="signIn.php">
       <input
         name="email"

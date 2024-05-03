@@ -289,7 +289,7 @@
           return false;
         }
         var namePattern = /^[a-zA-Z ]{2,30}$/;
-        var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        var emailPattern = /^[a-zA-Z0-9._%+-]+@(gmail|icloud|outlook)\.(com|fr|tn)$/;
         var passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
         var telPattern = /^\d{8}$/;
 

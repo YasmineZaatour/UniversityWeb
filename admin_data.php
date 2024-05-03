@@ -1,13 +1,23 @@
 <?php
     include 'db_connexion.php';
-    // Handle delete operation
+    // Handle delete and insert operations
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $idAdmin = $_POST["idAdmin"];
+        if (isset($_POST["idAdmin"])) {
+            $idAdmin = $_POST["idAdmin"];
 
-        $sql = "DELETE FROM admin WHERE idAdmin=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $idAdmin);
-        $stmt->execute();
+            $sql = "DELETE FROM admin WHERE idAdmin=?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $idAdmin);
+            $stmt->execute();
+        } elseif (isset($_POST["emailAdmin"], $_POST["passwordAdmin"])) {
+            $emailAdmin = $_POST["emailAdmin"];
+            $passwordAdmin = $_POST["passwordAdmin"];
+
+            $sql = "INSERT INTO admin (emailAdmin, passwordAdmin) VALUES (?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ss", $emailAdmin, $passwordAdmin);
+            $stmt->execute();
+        }
     }
 
     $sql = "SELECT * FROM admin";
@@ -42,6 +52,7 @@
             background-color: white;  
             border-radius: 0px;
             text-align: center;
+            width: 60px;
             
         }
         th{
@@ -65,6 +76,33 @@
             background-color: #d23a30;
         }
     </style>
+    <script>
+      function insertAdmin() {
+        var emailAdmin = prompt("Enter email");
+        var passwordAdmin = prompt("Enter password");
+
+        if (emailAdmin && passwordAdmin) {
+          var form = document.createElement("form");
+          form.setAttribute("method", "post");
+          form.setAttribute("action", "admin_data.php");
+
+          var fields = ["emailAdmin", "passwordAdmin"];
+          var values = [emailAdmin, passwordAdmin];
+
+          for (var i = 0; i < fields.length; i++) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", fields[i]);
+            hiddenField.setAttribute("value", values[i]);
+
+            form.appendChild(hiddenField);
+          }
+
+          document.body.appendChild(form);
+          form.submit();
+        }
+      }
+    </script>
   </head>
   <body>
   <section class="header">
@@ -79,6 +117,16 @@
           </ul>
         </div>
         <i class="fa fa-bars" onclick="showMenu()"></i>
+      </nav>
+      <nav>
+        <button onclick="insertAdmin()" 
+        style="background-color: #42b5f2;
+            color: white;
+            margin-left:1400px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer">Insert</button>
       </nav>
       <table class="admin-table">
         <tr>

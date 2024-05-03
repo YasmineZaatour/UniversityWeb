@@ -1,4 +1,7 @@
 <?php
+  // Start a new session or resume the existing one
+  session_start();
+
   include 'db_connexion.php';
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
@@ -9,9 +12,6 @@
     $result = $conn->query($sql);
     
     if ($result->num_rows > 0) {
-        // Start a new session or resume the existing one
-        session_start();
-
         // Store admin data in session variables
         $admin = $result->fetch_assoc();
         $_SESSION['admin_id'] = $admin['idAdmin'];
@@ -21,12 +21,11 @@
         header("Location: admin_dashboad.php");
         exit;
     } else {
-        echo "Invalid email or password.";
+        $_SESSION['login_error'] = "Invalid password.";
     }
 }
-  
-  
 ?>
+  
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -72,6 +71,20 @@
       >
         Saisissez votre e-mail et mot de passe
       </p>
+      <?php
+        if (isset($_SESSION['login_error'])) {
+          echo "<p id='loginErrorMessage' style='color:red; text-align:center;'>" . $_SESSION['login_error'] . "</p>";
+          echo "
+          <script type='text/javascript'>
+            setTimeout(function() {
+              var element = document.getElementById('loginErrorMessage');
+              element.parentNode.removeChild(element);
+            }, 3000);
+          </script>
+          ";
+          unset($_SESSION['login_error']);
+        }
+      ?>
       <form method="POST" action="signInAdmin.php">
       <input
         name="email"

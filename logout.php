@@ -4,12 +4,6 @@
 
     // When the user clicks "LOGOUT"
     if ($_SERVER["REQUEST_METHOD"] == "GET") {
-        $userId = $_SESSION['user_id'];
-
-        $query = "DELETE FROM users WHERE id = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $userId);
-        $stmt->execute();
 
         // Remove all session variables
         session_unset();

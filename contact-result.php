@@ -121,5 +121,40 @@
         </div>
       </div>
     </section>
+    <script>
+    function validateForm() {
+        var name = document.forms["contactForm"]["name"].value;
+        var email = document.forms["contactForm"]["email"].value;
+        var subject = document.forms["contactForm"]["subject"].value;
+        var message = document.forms["contactForm"]["message"].value;
+
+        var namePattern = /^[a-zA-Z ]{2,30}$/;
+        var emailPattern = /^[a-zA-Z0-9._%+-]+@(gmail|icloud|outlook)\.(com|fr|tn)$/;
+        var subjectPattern = /^[a-zA-Z ]{2,30}$/;
+        var messagePattern = /^[a-zA-Z ]{2,500}$/;
+
+        if (!namePattern.test(name)) {
+          alert("Invalid name. Please enter a valid name.");
+          return false;
+        }
+
+        if (!emailPattern.test(email)) {
+          alert("Invalid email. Please enter a valid email.");
+          return false;
+        }
+
+        if (!subjectPattern.test(subject)) {
+          alert("Invalid subject. Please enter a valid subject.");
+          return false;
+        }
+
+        if (!messagePattern.test(message)) {
+          alert("Invalid message. Please enter a valid message.");
+          return false;
+        }
+
+        return true;
+    }
+    </script>
   </body>
 </html>
